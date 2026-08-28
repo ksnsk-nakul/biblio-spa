@@ -19,7 +19,7 @@ export interface Folder {
   updated_at: string
 }
 
-export type EmbeddingStatus = 'none' | 'pending' | 'ready' | 'failed' | string
+export type EmbeddingStatus = 'none' | 'processing' | 'ready' | 'failed'
 
 export interface BookChapter {
   id: number

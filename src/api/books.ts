@@ -1,5 +1,5 @@
 import { apiClient } from './client'
-import type { Book } from '../types'
+import type { Book, EmbeddingStatus } from '../types'
 
 export async function listBooksInFolder(folderId: number): Promise<Book[]> {
   const { data } = await apiClient.get<{ data: Book[] }>('/api/books', {
@@ -83,4 +83,16 @@ export async function updateBook(id: number, payload: UpdateBookPayload): Promis
 
 export async function deleteBook(id: number): Promise<void> {
   await apiClient.delete(`/api/books/${id}`)
+}
+
+/**
+ * Idempotently kicks off (or resumes reporting on) lazy embedding for a book
+ * so it can be chatted with. Safe to call repeatedly — BookController::embed
+ * just returns the current status if embedding is already processing/ready.
+ * Not response-resource-wrapped (unlike most endpoints here), see
+ * BookController::embed.
+ */
+export async function triggerBookEmbedding(id: number): Promise<EmbeddingStatus> {
+  const { data } = await apiClient.post<{ embedding_status: EmbeddingStatus }>(`/api/books/${id}/embed`)
+  return data.embedding_status
 }

@@ -651,7 +651,8 @@ button, input {
 }
 
 .chapter-drawer,
-.reader-settings-panel {
+.reader-settings-panel,
+.chat-panel {
   position: absolute;
   top: 0;
   right: 0;
@@ -668,11 +669,18 @@ button, input {
   gap: 12px;
 }
 
+.chat-panel {
+  width: 360px;
+  overflow: hidden;
+}
+
 .chapter-drawer-header,
-.reader-settings-header {
+.reader-settings-header,
+.chat-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex: 0 0 auto;
 }
 
 .chapter-drawer-list {
@@ -750,4 +758,63 @@ button, input {
   color: var(--text);
   min-width: 36px;
   text-align: right;
+}
+
+.chat-panel-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.chat-panel-empty {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.chat-bubble {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  max-width: 90%;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chat-bubble-user {
+  align-self: flex-end;
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.chat-bubble-assistant {
+  align-self: flex-start;
+  background: var(--bg-subtle);
+  color: var(--text-h);
+}
+
+.chat-bubble-error {
+  align-self: stretch;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.chat-panel-input {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.chat-panel-input textarea {
+  flex: 1;
+  resize: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
 }

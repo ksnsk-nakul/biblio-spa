@@ -7,8 +7,10 @@ import { getProgress, updateProgress } from '../../api/progress'
 import { toApiError } from '../../api/client'
 import ChapterDrawer from './ChapterDrawer'
 import ReaderSettings from './ReaderSettings'
+import ChatPanel from './ChatPanel'
 import ProgressBar from './ProgressBar'
 import { useReaderSettings } from './useReaderSettings'
+import { useEmbeddingStatus } from './useEmbeddingStatus'
 import type { Book, BookChapter } from '../../types'
 
 const THEME_STYLES: Record<string, { body: Record<string, string> }> = {
@@ -37,8 +39,10 @@ export default function ReaderPage() {
   const [percentage, setPercentage] = useState<number | null>(null)
   const [showChapters, setShowChapters] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showChat, setShowChat] = useState(false)
 
   const { settings, update: updateSettings } = useReaderSettings()
+  const { status: embeddingStatus, retry: retryEmbedding } = useEmbeddingStatus(bookId)
 
   // Load book metadata + epub binary + saved progress, then boot epub.js.
   useEffect(() => {
@@ -160,6 +164,21 @@ export default function ReaderPage() {
     setShowChapters(false)
   }
 
+  function handleChatButtonClick() {
+    if (embeddingStatus === 'failed') {
+      retryEmbedding()
+      return
+    }
+    if (embeddingStatus === 'ready') setShowChat((v) => !v)
+  }
+
+  const chatLabel =
+    embeddingStatus === 'failed'
+      ? 'Retry chat'
+      : embeddingStatus === 'ready'
+        ? 'Chat'
+        : 'Preparing chat...'
+
   if (error) return <p className="form-error">{error}</p>
 
   return (
@@ -175,6 +194,15 @@ export default function ReaderPage() {
           </button>
           <button type="button" className="btn" onClick={() => setShowSettings((v) => !v)} disabled={isLoading}>
             Aa
+          </button>
+          <button
+            type="button"
+            className="btn"
+            onClick={handleChatButtonClick}
+            disabled={isLoading || embeddingStatus === 'none' || embeddingStatus === 'processing' || embeddingStatus === null}
+            title={embeddingStatus === 'failed' ? 'Chat setup failed — click to retry' : undefined}
+          >
+            {chatLabel}
           </button>
         </div>
       </div>
@@ -195,6 +223,8 @@ export default function ReaderPage() {
         {showSettings && (
           <ReaderSettings settings={settings} onChange={updateSettings} onClose={() => setShowSettings(false)} />
         )}
+
+        {showChat && embeddingStatus === 'ready' && <ChatPanel bookId={bookId} onClose={() => setShowChat(false)} />}
       </div>
 
       <ProgressBar percentage={percentage} />
