@@ -7,5 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    proxy: {
+      '/api': { target: 'http://bibliocon-api.test', changeOrigin: true },
+      '/sanctum': { target: 'http://bibliocon-api.test', changeOrigin: true },
+    },
   },
 })
