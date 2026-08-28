@@ -8,6 +8,46 @@ export async function listBooksInFolder(folderId: number): Promise<Book[]> {
   return data.data
 }
 
+export interface PaginatedBooks {
+  data: Book[]
+  meta: { current_page: number; last_page: number; total: number }
+}
+
+/**
+ * Backing the "browse by series" catalog view: no folder_id filter, so
+ * BookController::index returns every book (paginated 20/page) latest-first,
+ * which we group client-side by series_name.
+ */
+export async function listBooks(page: number): Promise<PaginatedBooks> {
+  const { data } = await apiClient.get<PaginatedBooks>('/api/books', { params: { page } })
+  return data
+}
+
+export async function getBook(id: number): Promise<Book> {
+  const { data } = await apiClient.get<{ data: Book }>(`/api/books/${id}`)
+  return data.data
+}
+
+export async function searchBooks(query: string): Promise<Book[]> {
+  const { data } = await apiClient.get<{ data: Book[] }>('/api/search', {
+    params: { q: query },
+  })
+  return data.data
+}
+
+/**
+ * Fetches the raw epub binary as an ArrayBuffer for epub.js to open directly
+ * (rather than pointing epub.js at the URL itself, which wouldn't carry the
+ * Sanctum session cookie). Goes through apiClient so withCredentials/XSRF
+ * handling matches every other authenticated request.
+ */
+export async function fetchBookFile(id: number): Promise<ArrayBuffer> {
+  const { data } = await apiClient.get<ArrayBuffer>(`/api/books/${id}/file`, {
+    responseType: 'arraybuffer',
+  })
+  return data
+}
+
 export async function uploadBook(
   file: File,
   folderId: number,

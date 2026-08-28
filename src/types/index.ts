@@ -21,6 +21,13 @@ export interface Folder {
 
 export type EmbeddingStatus = 'none' | 'pending' | 'ready' | 'failed' | string
 
+export interface BookChapter {
+  id: number
+  index: number
+  title: string
+  spine_href: string
+}
+
 export interface Book {
   id: number
   folder_id: number
@@ -28,12 +35,25 @@ export interface Book {
   author: string
   series_name: string | null
   volume_number: number | null
-  cover_path: string | null
+  cover_url: string | null
   chapter_count: number
   embedding_status: EmbeddingStatus
   folder?: Folder
+  chapters?: BookChapter[]
   created_at: string
   updated_at: string
+}
+
+export interface ReadingProgress {
+  book_id: number | null
+  chapter_index: number | null
+  cfi: string | null
+  updated_at: string | null
+}
+
+export interface DashboardData {
+  continue_reading: Book[]
+  shelf: Book[]
 }
 
 export interface ApiValidationError {

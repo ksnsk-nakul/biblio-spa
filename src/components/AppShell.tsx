@@ -12,6 +12,9 @@ export default function AppShell() {
         </Link>
 
         <nav className="app-nav">
+          <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
+            Home
+          </NavLink>
           <NavLink to="/library" className={({ isActive }) => (isActive ? 'active' : '')}>
             Library
           </NavLink>
