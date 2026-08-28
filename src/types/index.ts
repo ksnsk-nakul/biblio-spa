@@ -38,6 +38,7 @@ export interface Book {
   cover_url: string | null
   chapter_count: number
   embedding_status: EmbeddingStatus
+  on_shelf?: boolean
   folder?: Folder
   chapters?: BookChapter[]
   created_at: string

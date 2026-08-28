@@ -29,6 +29,7 @@ export default function BookDetailPage() {
         if (cancelled) return
         setBook(bookResult)
         setProgress(progressResult)
+        setIsOnShelf(bookResult.on_shelf ?? false)
       })
       .catch((err) => {
         if (!cancelled) setError(toApiError(err).message)
@@ -42,9 +43,6 @@ export default function BookDetailPage() {
     }
   }, [bookId])
 
-  // The book detail response has no "on shelf" flag of its own — shelf
-  // membership isn't exposed on BookResource, so this toggle is
-  // optimistic/local rather than reflecting a server-known initial state.
   async function toggleShelf() {
     if (!book) return
     setShelfBusy(true)
