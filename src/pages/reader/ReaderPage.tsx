@@ -67,8 +67,7 @@ export default function ReaderPage() {
         const rendition = epubBook.renderTo(viewerRef.current, {
           width: '100%',
           height: '100%',
-          flow: 'scrolled',
-          manager: 'continuous',
+          flow: 'scrolled-doc',
         })
         renditionRef.current = rendition
 
@@ -161,7 +160,6 @@ export default function ReaderPage() {
     setShowChapters(false)
   }
 
-  if (isLoading) return <p className="page-loading">Loading book...</p>
   if (error) return <p className="form-error">{error}</p>
 
   return (
@@ -172,16 +170,17 @@ export default function ReaderPage() {
         </button>
         <span className="reader-title">{book?.title}</span>
         <div className="reader-toolbar-actions">
-          <button type="button" className="btn" onClick={() => setShowChapters((v) => !v)}>
+          <button type="button" className="btn" onClick={() => setShowChapters((v) => !v)} disabled={isLoading}>
             Chapters
           </button>
-          <button type="button" className="btn" onClick={() => setShowSettings((v) => !v)}>
+          <button type="button" className="btn" onClick={() => setShowSettings((v) => !v)} disabled={isLoading}>
             Aa
           </button>
         </div>
       </div>
 
       <div className="reader-body">
+        {isLoading && <p className="page-loading reader-loading-overlay">Loading book...</p>}
         <div ref={viewerRef} className="reader-viewer" />
 
         {showChapters && book?.chapters && (
