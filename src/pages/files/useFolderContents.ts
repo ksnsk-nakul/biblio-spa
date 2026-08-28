@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getFolder, listFolders } from '../../api/folders'
+import { toApiError } from '../../api/client'
 import type { Book, Folder } from '../../types'
 
 export interface Crumb {
@@ -51,7 +52,7 @@ export function useFolderContents(folderId: number | null) {
         crumbs,
       })
     } catch (err) {
-      setState((prev) => ({ ...prev, isLoading: false, error: (err as Error).message ?? 'Failed to load folder.' }))
+      setState((prev) => ({ ...prev, isLoading: false, error: toApiError(err).message ?? 'Failed to load folder.' }))
     }
   }, [folderId])
 
